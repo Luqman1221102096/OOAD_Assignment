@@ -1,4 +1,5 @@
 // Base class of all the pieces
+// Authors : Luqman
 public class Piece {
     String pieceID, side;
     int x,y;
