@@ -33,6 +33,10 @@ abstract class Piece {
     public String getPieceID() {
         return pieceID;
     }
+    
+    public void setPieceID(String newPieceID) {
+        this.pieceID = newPieceID;
+    }
 
     //get the side (team) of the piece
     public String getSide() {
@@ -40,5 +44,5 @@ abstract class Piece {
     }
 
     //for diff piece, diff moves
-    public abstract List<int[]> getMoves();
+    public abstract List<int[]> getMoves(List<Piece> pieces);// I add in the pieces so that Tor and Xor can immediately return moves that don't contain blockoff squares
 }

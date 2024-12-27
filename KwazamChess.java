@@ -6,5 +6,6 @@ public class KwazamChess {
         KwazamChessController controller = new KwazamChessController(model, view);
 
         controller.startGame(); //start the game
+        //controller.loadGame(); // Testing loading safeFile
     }
 }

@@ -8,7 +8,7 @@ class Biz extends Piece {
     }
 
     @Override
-    public List<int[]> getMoves() {
+    public List<int[]> getMoves(List<Piece> pieces) {
         List<int[]> moves = new ArrayList<>();
         //all the possible knight-like moves (any direction "L")
         int[][] deltas = {

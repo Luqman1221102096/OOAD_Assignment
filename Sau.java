@@ -8,7 +8,7 @@ class Sau extends Piece {
     }
 
     @Override
-    public List<int[]> getMoves() {
+    public List<int[]> getMoves(List<Piece> pieces) {
         List<int[]> moves = new ArrayList<>();
         //single-step moves in any direction
         int[][] deltas = {

@@ -15,19 +15,35 @@ public class TorXor extends Piece {
         this.state = state;
     }
     // Gets the list of legal moves of the Tor and Xor pieces
-    public List<int[]> getMoves(){
+    public List<int[]> getMoves(List<Piece> pieces){
         List<int[]> moves = new ArrayList<int[]>();
         // Gets the list of legal moves of the Tor piece
         if(state == "Tor"){
             // Horizontal: the y coordinate stay still as we loop through the x coordinates and add the Squares
             for (int i = 0; i < 5; i++){
                 if(i+1 == this.x){continue;}// Skips current square
-                moves.add(new int[]{i+1,this.y});
+                if(pieceAt(i, this.y, pieces)){
+                    if(this.x-i < 0){
+                        break;
+                    }
+                    else{
+                        moves.clear();
+                    }
+                }
+                moves.add(new int[]{i,this.y});
             }
             // Vertical the x coordinate stay still as we loop through the y coordinates and add the Squares
             for (int i = 0; i < 8; i++){
                 if(i+1 == this.y){continue;}// Skips current square
-                moves.add(new int[]{this.x,i+1});
+                if(pieceAt(this.x, i, pieces)){
+                    if(this.y-i < 0){
+                        break;
+                    }
+                    else{
+                        moves.clear();
+                    }
+                }
+                moves.add(new int[]{this.x,i});
             }
             return moves;
         }
@@ -37,6 +53,7 @@ public class TorXor extends Piece {
             // Since the y coordinate increases/decrease by 1 for every 1 square we move away from current x we can calculate the y coordinate at the left edge of the board as current x coordinte - 1 or this.x-1.
             // yCoordinatePlus is decreased as it approches the current x coordinate. Once it passes it, the yCoordinatePlus is increase as we go in the opposite direction.
             int yCoordinatePlus = this.x - 1;// Set yCoordinatePlus
+            List<int[]> moves2 = new ArrayList<int[]>();
             for (int i = 0; i < 5; i++){
                 // Skips the current square and adds 1 to yCoordinatePlus so it doesn't add 0 on the next loop
                 if(i+1 == this.x){
@@ -45,11 +62,27 @@ public class TorXor extends Piece {
                 }
                 // Adding upper diagonal moves with bound checking
                 if(this.y+yCoordinatePlus <= 8){
+                    if(pieceAt(i, this.y+yCoordinatePlus, pieces)){
+                        if(this.x-i < 0){
+                            break;
+                        }
+                        else{
+                            moves.clear();
+                        }
+                    }
                     moves.add(new int[]{i+1,this.y+yCoordinatePlus});
                 }
                 // Adding lower diagonal moves with bound checking
                 if(this.y-yCoordinatePlus >= 1){
-                    moves.add(new int[]{i+1,this.y-yCoordinatePlus});
+                    if(pieceAt(i, this.y-yCoordinatePlus, pieces)){
+                        if(this.x-i < 0){
+                            break;
+                        }
+                        else{
+                            moves.clear();
+                        }
+                    }
+                    moves2.add(new int[]{i+1,this.y-yCoordinatePlus});
                 }
                 // Begin adding to yCoordinatePlus once it has passed the current square
                 if(this.x > i+1){
@@ -63,29 +96,41 @@ public class TorXor extends Piece {
         }
     }
     // Validates if the given coordinates is a legal move.
-    public void validateMove(int x, int y){
-        List<int[]> moves = getMoves();// Gets list of legal moves
+    /*public void validateMove(int x, int y){
+        List<int[]> moves = getMoves(KwazamChessModel model);// Gets list of possible moves
         for(int i = 0; i < moves.size(); i++){
             if(x == moves.get(i)[0] && y == moves.get(i)[1])
             {
                 setCoordinates(x, y);
                 System.out.println("Valid move");
-                turn++;
-                if(turn == 2){
-                    turn = 0;
-                    if(state == "Tor"){
-                        state = "Xor";
-                    }
-                    else{
-                        state = "Tor";
-                    }
-                }
                 return;
             }
         }
         System.out.println("Invalid move");
-    }
+    }*/
     public String getState(){
         return state;
+    }
+    public void updateTurn(){
+        turn++;
+        if(turn == 2){
+            turn = 0;
+            if(state == "Tor"){
+                state = "Xor";
+                this.setPieceID(pieceID.substring(0,1) + "X" + pieceID.substring(2,3));
+            }
+            else{
+                state = "Tor";
+                this.setPieceID(pieceID.substring(0,1) + "T" + pieceID.substring(2,3));
+            }
+        }
+    }
+    public boolean pieceAt(int x, int y, List<Piece> pieces) {
+        for (Piece piece : pieces) {
+            if (piece.getCoordinateX() == x && piece.getCoordinateY() == y) {
+                return true;
+            }
+        }
+        return false; //no piece is at this location
     }
 }

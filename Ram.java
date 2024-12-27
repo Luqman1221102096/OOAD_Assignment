@@ -8,7 +8,7 @@ class Ram extends Piece {
     }
 
     @Override
-    public List<int[]> getMoves() {
+    public List<int[]> getMoves(List<Piece> pieces) {
         List<int[]> moves = new ArrayList<>();
         //rams move forward, the direction depends on their side
         if (side.equals("Blue")) {
