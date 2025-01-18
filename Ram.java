@@ -9,7 +9,7 @@ class Ram extends Piece {
     }
 
     @Override
-    public List<int[]> getMoves() {
+    public List<int[]> getMoves(List<Piece> pieces) {
         List<int[]> moves = new ArrayList<>();
 
         if (side.equals("Blue")) {

@@ -1,7 +1,7 @@
+//KwazamChessModel.java
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.Scanner;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -44,63 +44,49 @@ class KwazamChessModel {
         pieces.add(new TorXor("RX1", "Red", 4, 0, "Xor"));
         pieces.add(new TorXor("RT2", "Red", 0, 0, "Tor"));
     }
-    // Temporary method with random moves being made for testing
-    public boolean gameLoop(){
-            boolean hasValidMove = false; //flag if got valid move
-            Random random = new Random();
-            
-            //check if got valid move for current player
-            for (Piece piece : pieces) {
-                if ((blueTurn && piece.side.equals("Blue")) || (!blueTurn && piece.side.equals("Red"))) {
-                    List<int[]> moves = piece.getMoves(pieces);
-                    for (int[] move : moves) {
-                        if (pieceAt(move[0], move[1]) == null || !pieceAt(move[0], move[1]).side.equals(piece.side)) {
-                            hasValidMove = true;
-                        }
-                    }
-                }
-            }
-            //not working, prolly remove later...too eepy to fix
-            /*if (!hasValidMove) {
-                view.showMessage((blueTurn ? "Blue" : "Red") + " has no valid moves. Game over!");
-                view.showMessage("Blue captured: " + blueCaptured);
-                view.showMessage("Red captured: " + redCaptured);
-                return;
-            }*/
 
-            while (true) {
-                Piece randomPiece = pieces.get(random.nextInt(pieces.size()));
+    public boolean movePiece(String pieceID, int x, int y) {
+        Piece piece = findPiece(pieceID);
+        if (piece == null) {
+            System.out.println("Piece not found.");
+            return false;
+        }
 
-                if ((blueTurn && randomPiece.side.equals("Blue")) || (!blueTurn && randomPiece.side.equals("Red"))) {
-                    List<int[]> moves = randomPiece.getMoves(pieces);
-                    for (int[] move : moves) {
-                        //check if moves are withinbound (KCModel.java)
-                        if (isWithinBounds(move[0], move[1]) && 
-                        (pieceAt(move[0], move[1]) == null || 
-                         !pieceAt(move[0], move[1]).side.equals(randomPiece.side))) {
-                            logTurnDetails(randomPiece, move[0], move[1]);//log the move
-                            executeMove(randomPiece.getPieceID(), move[0], move[1]);//move
-                            blueTurn = !blueTurn; //switch turn
-                            turnNumber++;//+turnnumber
-                            for(Piece piece : pieces){// Update Tor/Xor turn
-                                if(piece instanceof TorXor){
-                                    //System.out.println(((TorXor)piece).state);
-                                    ((TorXor)piece).updateTurn();
-                                }
-                            }
-                            return true;
-                        }
-                    }
-                }
-                break;
-            }
+        if ((blueTurn && !piece.side.equals("Blue")) || (!blueTurn && !piece.side.equals("Red"))) {
+            System.out.println("It's not this piece's turn.");
+            return false;
+        }
+
+        if (isWithinBounds(x, y) &&
+            (pieceAt(x, y) == null || !pieceAt(x, y).side.equals(piece.side)) &&
+            piece.getMoves(pieces).stream().anyMatch(move -> move[0] == x && move[1] == y)) {
+
+            executeMove(pieceID, x, y);
+            return true;
+        }
+
         return false;
+    }
+
+    public void endTurn() {
+        blueTurn = !blueTurn; //switch turn
+        turnNumber++;//+turnnumber
+        for (Piece piece : pieces) { // Update Tor/Xor turn
+            if (piece instanceof TorXor) {
+                ((TorXor) piece).updateTurn();
+            }
+        }
+    }
+
+    public boolean isBlueTurn() {
+        return blueTurn;
     }
 
     //get a list of all the pieces
     public List<Piece> getPieces() {
         return pieces;
     }
+
     //get a list of all the pieces
     public int getTurn() {
         return turnNumber;
@@ -116,15 +102,14 @@ class KwazamChessModel {
         return null; //if no piece matches the ID, return null
     }
 
-  //remove a piece from the board when captured
-  public void removePiece(Piece piece) {
-      pieces.remove(piece);
-      if (piece instanceof Sau) { //if Sau gets captured then game over
-          System.out.println("Game Over! " + piece.getSide() + " Sau has been captured.");
-          System.exit(0); //end the game
+    //remove a piece from the board when captured
+    public void removePiece(Piece piece) {
+        pieces.remove(piece);
+        if (piece instanceof Sau) { //if Sau gets captured then game over
+            System.out.println("Game Over! " + piece.getSide() + " Sau has been captured.");
+            System.exit(0); //end the game
         }
     }
-
 
     //check if there is a piece at the given coords
     public Piece pieceAt(int x, int y) {
@@ -149,6 +134,7 @@ class KwazamChessModel {
         System.out.println("Piece: " + piece.getPieceID());
         System.out.println("Move: From (" + piece.getCoordinateX() + ", " + piece.getCoordinateY() + ") to (" + newX + ", " + newY + ")");
     }
+
     //execution
     private void executeMove(String pieceID, int newX, int newY) {
         Piece piece = findPiece(pieceID);//find the piece by ID
@@ -166,8 +152,9 @@ class KwazamChessModel {
             piece.setCoordinates(newX, newY); //update the pieces position
         }
     }
+
     // Safe the game into a text file
-    public void safeGame(){
+    public void safeGame() {
         // Creates safe file if one doesn't already exit
         try {
             File file = new File("safeFile.txt");
@@ -180,9 +167,9 @@ class KwazamChessModel {
             System.out.println("An error occurred.");
             e.printStackTrace();
         }
-        // writes information of every pieace on the board line by line
+        // writes information of every piece on the board line by line
         try (FileWriter writer = new FileWriter("safeFile.txt")) {
-            for(Piece piece : pieces){
+            for (Piece piece : pieces) {
                 writer.write(piece.getPieceID() + " " + piece.getCoordinateX() + " " + piece.getCoordinateY() + "\n");
             }
             System.out.println("Successfully wrote to the file.");
@@ -191,37 +178,33 @@ class KwazamChessModel {
             e.printStackTrace();
         }
     }
+
     // Load game from safe file
-    public void loadGameState(){
+    public void loadGameState() {
         pieces.clear();
         try {
             File file = new File("safeFile.txt");
             Scanner scanner = new Scanner(file);
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
-                String PieceID = line.substring(0,3);
+                String PieceID = line.substring(0, 3);
                 String side;
-                int x = Integer.parseInt(line.substring(4,5));
-                int y = Integer.parseInt(line.substring(6,7));
-                if(line.charAt(0) == 'B'){
+                int x = Integer.parseInt(line.substring(4, 5));
+                int y = Integer.parseInt(line.substring(6, 7));
+                if (line.charAt(0) == 'B') {
                     side = "Blue";
-                }
-                else{
+                } else {
                     side = "Red";
                 }
-                if(line.charAt(1) == 'R'){
+                if (line.charAt(1) == 'R') {
                     pieces.add(new Ram(PieceID, side, x, y));
-                }
-                else if(line.charAt(1) == 'B'){
+                } else if (line.charAt(1) == 'B') {
                     pieces.add(new Biz(PieceID, side, x, y));
-                }
-                else if(line.charAt(1) == 'S'){
+                } else if (line.charAt(1) == 'S') {
                     pieces.add(new Sau(PieceID, side, x, y));
-                }
-                else if(line.charAt(1) == 'T'){
+                } else if (line.charAt(1) == 'T') {
                     pieces.add(new TorXor(PieceID, side, x, y, "Tor"));
-                }
-                else if(line.charAt(1) == 'X'){
+                } else if (line.charAt(1) == 'X') {
                     pieces.add(new TorXor(PieceID, side, x, y, "Xor"));
                 }
                 System.out.println(line);

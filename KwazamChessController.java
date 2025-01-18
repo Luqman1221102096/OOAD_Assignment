@@ -1,6 +1,6 @@
-//only for testing code if works or not
+//KwazamChessController.java
 import java.util.List;
-import java.util.Random;
+import java.util.Scanner;
 import java.util.ArrayList;
 
 class KwazamChessController {
@@ -13,24 +13,40 @@ class KwazamChessController {
         this.view = view;
     }
 
-    //start the game and play randomly until no moves are left
+    //start the game and play turn by turn
     public void startGame() {
-        view.showBoard(model.getPieces()); //show initial board
-        while(model.getTurn() <= 50){
-            if(model.gameLoop()){
-                view.showBoard(model.getPieces());
+        Scanner scanner = new Scanner(System.in);
+
+        while (true) { //users turn logic
+            view.showBoard(model.getPieces());
+            String currentPlayer = model.isBlueTurn() ? "Blue" : "Red";
+            System.out.println(currentPlayer + "'s turn.");
+
+            System.out.print("Piece: ");
+            String pieceID = scanner.nextLine();
+
+            System.out.print("Move (x, y): ");
+            String moveInput = scanner.nextLine();
+            String[] moveParts = moveInput.split(",");
+
+            try {
+                int x = Integer.parseInt(moveParts[0].trim());
+                int y = Integer.parseInt(moveParts[1].trim());
+
+                if (model.movePiece(pieceID, x, y)) {
+                    model.endTurn();
+                } else {
+                    System.out.println("Invalid move. Try again.");
+                }
+            } catch (Exception e) {
+                System.out.println("Invalid input format. Please enter in the format <x, y>.");
             }
         }
-        model.safeGame();
     }
+
     // Load game and start playing from that position
-    public void loadGame(){
+    public void loadGame() {
         model.loadGameState();
-        while(model.getTurn() <= 50){
-            if(model.gameLoop()){
-                view.showBoard(model.getPieces());
-            }
-        }
-        model.safeGame();
+        startGame();
     }
 }
