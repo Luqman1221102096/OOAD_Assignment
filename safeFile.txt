@@ -1,0 +1,21 @@
+7
+false
+BR0 0 1
+RR0 0 6
+BR1 1 2
+RR1 1 5
+BR2 2 1
+RR2 2 6
+BR3 3 2
+BR4 4 1
+RR4 4 6
+BS  2 0
+RS  2 7
+BB1 1 0
+BB2 3 0
+RB1 1 7
+RB2 3 7
+BT1 3 5
+BX2 4 0
+RT1 1 4
+RX2 0 7
