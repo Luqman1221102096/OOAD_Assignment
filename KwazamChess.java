@@ -4,6 +4,6 @@ public class KwazamChess {
         KwazamChessModel model = new KwazamChessModel();
         KwazamChessView view = new KwazamChessView(8, 5);
         KwazamChessController controller = new KwazamChessController(model, view);
-        view.setController(controller);
+        //view.setController(controller);
     }
 }

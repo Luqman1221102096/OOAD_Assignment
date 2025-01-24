@@ -17,6 +17,7 @@ class KwazamChessModel {
     private int turnNumber;        //turn number
     private List<String> blueCaptured; //;ist of pieces captured by blue (//not working, prolly remove later...too eepy to fix)
     private List<String> redCaptured;  //list of pieces captured by red (//not working, prolly remove later...too eepy to fix)
+    private boolean gameOver = false; // To let the controller and view know when a game is over.
 
     public KwazamChessModel() {
         pieces = new ArrayList<>();
@@ -95,6 +96,10 @@ class KwazamChessModel {
         return turnNumber;
     }
 
+    public boolean getGameOver(){
+        return gameOver;
+    }
+
     //find piece by its ID
     public Piece findPiece(String pieceID) {
         for (Piece piece : pieces) {
@@ -109,8 +114,9 @@ class KwazamChessModel {
     public void removePiece(Piece piece) {
         pieces.remove(piece);
         if (piece instanceof Sau) { //if Sau gets captured then game over
-            System.out.println("Game Over! " + piece.getSide() + " Sau has been captured.");
-            System.exit(0); //end the game
+            gameOver = true;
+            //System.out.println("Game Over! " + piece.getSide() + " Sau has been captured.");
+            //System.exit(0); //end the game
         }
     }
 

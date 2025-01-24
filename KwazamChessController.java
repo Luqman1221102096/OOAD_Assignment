@@ -27,23 +27,31 @@ class KwazamChessController {
         this.ROWS = 8;
         this.COLUMNS = 5; 
         cellListenerAdder();
+        menuListenerAdder(view.getMenuItems());
     }
 
     // Load game and update the GUI state
     public void loadGame() {
         model.loadGameState(); // Load the saved game state into the model
         view.loadBoard(model.getPieces(), model.getTurn()); // Update the GUI to reflect the loaded state
+        history.clearHistory();
     }
 
     public void saveGame() {
         model.safeGame(); //save game state
     }
 
-    /*// undo game and update the GUI state
+    // undo game and update the GUI state
     public void undoGame() {
-        memento.restoreState(); // undo the game
+        // Game first move. Can't undo
+        if(history.getHistorySize() == 0){
+            view.updateStatusLabel("Can't undo on first move");
+            return;
+        }
+        Memento menento = history.getMemento();
+        model.restoreState(menento); // undo the game
         view.loadBoard(model.getPieces(), model.getTurn()); // Update the GUI to reflect the loaded state
-    }*/
+    }
 
     // Adds actionListeners to all cells
     public void cellListenerAdder(){
@@ -52,6 +60,13 @@ class KwazamChessController {
                 view.getBoardButtons()[row][col].addActionListener(new CellClickListener(row, col));
             }
         }
+    }
+
+    public void menuListenerAdder(List<JMenuItem> menuItems){
+        menuItems.get(0).addActionListener(e -> System.exit(0));
+        menuItems.get(1).addActionListener(e -> saveGame());
+        menuItems.get(2).addActionListener(e -> loadGame());
+        menuItems.get(3).addActionListener(e -> undoGame());
     }
     // Implementation of action listener
     public class CellClickListener implements ActionListener {
@@ -90,6 +105,10 @@ class KwazamChessController {
                         view.switchPlayerAndFlip();
                         model.flipModel();
                         view.updateStatusLabel(model.isBlueTurn() ? "Player 1's turn" : "Player 2's turn"); 
+                        if(model.getGameOver()){
+                            String whoWon = "Game Over!"  + (model.isBlueTurn() ? " Red won, Blue" : " Blue won, Red") + " Sau has been captured.";
+                            view.GameOver(whoWon);
+                        }
                     } else {
                         view.updateStatusLabel("Invalid move. Try again.");
                     }

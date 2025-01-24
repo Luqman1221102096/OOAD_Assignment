@@ -3,6 +3,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import java.util.HashMap;
 
@@ -11,7 +12,7 @@ public class KwazamChessView {
     private JFrame frame;
     private JPanel boardPanel;
     private JLabel statusLabel;
-    private KwazamChessController controller;
+    //private KwazamChessController controller;
     
     
     private final int ROWS;
@@ -20,22 +21,20 @@ public class KwazamChessView {
 
     private HashMap<String, ImagePiece> pieceMap; 
     private JButton[][] boardButtons; 
-
-    //private int selectedPieceRow = -1;
-    //private int selectedPieceCol = -1;
-    //private boolean isPlayerOneTurn = false;
+    private List<JMenuItem> menuItems;
 
     public KwazamChessView(int rows, int columns) {
         this.ROWS = rows;
         this.COLUMNS = columns;
         this.pieceMap = new HashMap<>();
         this.boardButtons = new JButton[ROWS][COLUMNS];
+        this.menuItems = new ArrayList<JMenuItem>(); 
         initializeGUI();
     }
 
-    public void setController(KwazamChessController controller) {
+    /*public void setController(KwazamChessController controller) {
         this.controller = controller;
-    }
+    }*/
 
     public void initializeGUI() {
         frame = new JFrame("Kwazam Chess");
@@ -47,22 +46,23 @@ public class KwazamChessView {
         JMenuBar menuBar = new JMenuBar();
         JMenu fileMenu = new JMenu("File");
         JMenuItem exitItem = new JMenuItem("Exit");
-        exitItem.addActionListener(e -> System.exit(0));
+        menuItems.add(exitItem);
+
         fileMenu.add(exitItem);
         menuBar.add(fileMenu);
         frame.setJMenuBar(menuBar);
 
         JMenuItem saveGame = new JMenuItem("Save");
-        saveGame.addActionListener(e -> controller.saveGame());
+        menuItems.add(saveGame);
         fileMenu.add(saveGame);
 
         JMenuItem loadGame = new JMenuItem("Load");
-        loadGame.addActionListener(e -> controller.loadGame());
+        menuItems.add(loadGame);
         fileMenu.add(loadGame);
 
-        /*JMenuItem undoGame = new JMenuItem("undo");
-        undoGame.addActionListener(e -> controller.undoGame());
-        fileMenu.add(undoGame);*/
+        JMenuItem undoGame = new JMenuItem("undo");
+        menuItems.add(undoGame);
+        fileMenu.add(undoGame);
 
         boardPanel = new JPanel();
         boardPanel.setLayout(new GridLayout(ROWS, COLUMNS));
@@ -139,9 +139,9 @@ public class KwazamChessView {
                 }
     
                 // Attach the controller's listener
-                if (controller != null) {
+                /*if (controller != null) {
                     cell.addActionListener(controller.new CellClickListener(row, col));
-                }
+                }*/
     
                 boardPanel.add(cell);
                 boardButtons[row][col] = cell;
@@ -185,6 +185,10 @@ public class KwazamChessView {
 
     public JButton[][] getBoardButtons(){
         return boardButtons;
+    }
+
+    public List<JMenuItem> getMenuItems(){
+        return menuItems;
     }
 
     public void updateStatusLabel(String label){
@@ -355,49 +359,11 @@ public class KwazamChessView {
         pieceMap = newPieceMap;
         updateBoard(null, null);
     }
+
+    public void GameOver(String whoWon){
+        JFrame gameOver = new JFrame();
+        JOptionPane.showMessageDialog(gameOver, whoWon, "WINNER!", JOptionPane.INFORMATION_MESSAGE);
+        System.exit(0);
+    }
 }
 
-
-//displaying the board and messages to the user
-/*class KwazamChessView {
-    public void showBoard(List<Piece> pieces) {
-        String[][] board = new String[8][5]; //create an empty 8x5 board
-
-        //fill the board with blank spaces
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 5; j++) {
-                board[i][j] = "   ";
-            }
-        }
-
-        //place pieces on the board
-        for (Piece piece : pieces) {
-            board[piece.getCoordinateY()][piece.getCoordinateX()] = piece.getPieceID();
-        }
-
-        //X-axis labels
-        System.out.println("     X");//label X
-        System.out.print("    ");
-        for (int x = 0; x < 5; x++) {
-            System.out.printf(" %2d ", x);
-        }
-        System.out.println();
-
-        //Y-axis labels
-        for (int y = 0; y < 8; y++) {
-            System.out.printf(" %2d ", y);
-            for (int x = 0; x < 5; x++) {
-                System.out.print("|" + board[y][x]);
-            }
-            System.out.println("|");
-        }
-
-        //label Y
-        System.out.println("   Y");
-    }
-
-    //sshow a message to the user (also testing text output)
-    public void showMessage(String message) {
-        System.out.println(message);
-    }
-}*/
