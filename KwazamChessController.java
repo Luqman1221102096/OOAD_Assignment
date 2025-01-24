@@ -29,58 +29,21 @@ class KwazamChessController {
         cellListenerAdder();
     }
 
-    //start the game and play turn by turn
-    public void startGame() {
-        Scanner scanner = new Scanner(System.in);
-
-        while (true) { //users turn logic
-            history.addMemento(new Memento(model.getPieces(), model.isBlueTurn(), model.getTurn()));// Stores previous state
-
-            //view.showBoard(model.getPieces());
-            System.out.println("Turn: " + model.getTurn());
-            String currentPlayer = model.isBlueTurn() ? "Blue" : "Red";
-            System.out.println(currentPlayer + "'s turn.");
-
-            System.out.print("Piece: ");
-            String pieceID = scanner.nextLine();
-
-            System.out.print("Move (x, y): ");
-            String moveInput = scanner.nextLine();
-            String[] moveParts = moveInput.split(",");
-
-            try {
-                int x = Integer.parseInt(moveParts[0].trim());
-                int y = Integer.parseInt(moveParts[1].trim());
-
-                if (model.movePiece(pieceID, x, y)) {
-                    model.endTurn();
-                } else {
-                    System.out.println("Invalid move. Try again.");
-                }
-            } catch (Exception e) {
-                System.out.println("Invalid input format. Please enter in the format <x, y>.");
-            }
-
-            //view.showBoard(model.getPieces()); // Shows that the move actuall changes the board before undo.
-            // This is just to test memento
-            if(model.getTurn() != 1){
-                System.out.println("Undo move? y/n");
-                String undo = scanner.nextLine();
-                if(undo.equals("y") || undo.equals("Y")){
-                    System.out.println("Restoring game state");
-                    model.restoreState(history.getMemento());
-                }
-            }
-            model.safeGame();
-        }
-    }
-
-    // Load game and start playing from that position
+    // Load game and update the GUI state
     public void loadGame() {
-        model.loadGameState();
-        view.loadBoard(model.getPieces(), model.getTurn());
-        //startGame();
+        model.loadGameState(); // Load the saved game state into the model
+        view.loadBoard(model.getPieces(), model.getTurn()); // Update the GUI to reflect the loaded state
     }
+
+    public void saveGame() {
+        model.safeGame(); //save game state
+    }
+
+    /*// undo game and update the GUI state
+    public void undoGame() {
+        memento.restoreState(); // undo the game
+        view.loadBoard(model.getPieces(), model.getTurn()); // Update the GUI to reflect the loaded state
+    }*/
 
     // Adds actionListeners to all cells
     public void cellListenerAdder(){
@@ -127,7 +90,6 @@ class KwazamChessController {
                         view.switchPlayerAndFlip();
                         model.flipModel();
                         view.updateStatusLabel(model.isBlueTurn() ? "Player 1's turn" : "Player 2's turn"); 
-                        model.safeGame();// Temporary just. Should be called in its own function.
                     } else {
                         view.updateStatusLabel("Invalid move. Try again.");
                     }

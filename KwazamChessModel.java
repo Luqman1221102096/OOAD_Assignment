@@ -3,6 +3,9 @@
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+
+import javax.swing.text.View;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -126,15 +129,6 @@ class KwazamChessModel {
         return x >= 0 && x < 5 && y >= 0 && y < 8;
     }
 
-    //logs
-    private void logTurnDetails(Piece piece, int newX, int newY) {
-        String side = blueTurn ? "Blue" : "Red"; //determine which side is playing
-        System.out.println("Turn " + turnNumber + ":");
-        System.out.println("Side: " + side);
-        System.out.println("Piece: " + piece.getPieceID());
-        System.out.println("Move: From (" + piece.getCoordinateX() + ", " + piece.getCoordinateY() + ") to (" + newX + ", " + newY + ")");
-    }
-
     //execution
     private void executeMove(String pieceID, int newX, int newY) {
         Piece piece = findPiece(pieceID);//find the piece by ID
@@ -227,6 +221,7 @@ class KwazamChessModel {
             e.printStackTrace();
         }
     }
+
     // Undo a move
     public void restoreState(Memento memento){
         this.pieces.clear(); // Removes current pieces

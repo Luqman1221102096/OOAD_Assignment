@@ -11,7 +11,9 @@ public class KwazamChessView {
     private JFrame frame;
     private JPanel boardPanel;
     private JLabel statusLabel;
-
+    private KwazamChessController controller;
+    
+    
     private final int ROWS;
     private final int COLUMNS;
     private int turnCount = 0;
@@ -31,7 +33,11 @@ public class KwazamChessView {
         initializeGUI();
     }
 
-    private void initializeGUI() {
+    public void setController(KwazamChessController controller) {
+        this.controller = controller;
+    }
+
+    public void initializeGUI() {
         frame = new JFrame("Kwazam Chess");
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setSize(600, 700);
@@ -45,6 +51,18 @@ public class KwazamChessView {
         fileMenu.add(exitItem);
         menuBar.add(fileMenu);
         frame.setJMenuBar(menuBar);
+
+        JMenuItem saveGame = new JMenuItem("Save");
+        saveGame.addActionListener(e -> controller.saveGame());
+        fileMenu.add(saveGame);
+
+        JMenuItem loadGame = new JMenuItem("Load");
+        loadGame.addActionListener(e -> controller.loadGame());
+        fileMenu.add(loadGame);
+
+        /*JMenuItem undoGame = new JMenuItem("undo");
+        undoGame.addActionListener(e -> controller.undoGame());
+        fileMenu.add(undoGame);*/
 
         boardPanel = new JPanel();
         boardPanel.setLayout(new GridLayout(ROWS, COLUMNS));
@@ -67,14 +85,14 @@ public class KwazamChessView {
         ImageIcon redSau = preScaledIcon("r-Sau.png");
         ImageIcon redTor = preScaledIcon("r-Tor.png");
         ImageIcon redXor = preScaledIcon("r-Xor.png");
-
+    
         // Load icons for blue (player two) pieces
         ImageIcon blueRam = preScaledIcon("b-Ram.png");
         ImageIcon blueBiz = preScaledIcon("b-Biz.png");
         ImageIcon blueSau = preScaledIcon("b-Sau.png");
         ImageIcon blueTor = preScaledIcon("b-Tor.png");
         ImageIcon blueXor = preScaledIcon("b-Xor.png");
-
+    
         // Initialize pieces in HashMap with owner and type information
         for (int col = 0; col < COLUMNS; col++) {
             // Red pieces in the first row (player one)
@@ -89,10 +107,10 @@ public class KwazamChessView {
             } else if (col == 4) {
                 pieceMap.put("0," + col, new ImagePiece(redXor, false, "Xor"));
             }
-
+    
             // Red Rams in the second row (player one)
             pieceMap.put("1," + col, new ImagePiece(redRam, false, "Ram"));
-
+    
             // Blue pieces in the last row (player two)
             if (col == 0) {
                 pieceMap.put((ROWS - 1) + "," + col, new ImagePiece(blueXor, true, "Xor"));
@@ -105,27 +123,32 @@ public class KwazamChessView {
             } else if (col == 4) {
                 pieceMap.put((ROWS - 1) + "," + col, new ImagePiece(blueTor, true, "Tor"));
             }
-
+    
             // Blue Rams in the second-to-last row (player two)
             pieceMap.put((ROWS - 2) + "," + col, new ImagePiece(blueRam, true, "Ram"));
         }
-
+    
         for (int row = 0; row < ROWS; row++) {
             for (int col = 0; col < COLUMNS; col++) {
                 JButton cell = new JButton();
                 String key = row + "," + col;
-
+    
                 // Set initial icon
                 if (pieceMap.containsKey(key)) {
                     cell.setIcon(pieceMap.get(key).icon);
                 }
-
-                //cell.addActionListener(new CellClickListener(row, col));
+    
+                // Attach the controller's listener
+                if (controller != null) {
+                    cell.addActionListener(controller.new CellClickListener(row, col));
+                }
+    
                 boardPanel.add(cell);
                 boardButtons[row][col] = cell;
             }
         }
     }
+    
 
     private ImageIcon preScaledIcon(String path) {
         try {
@@ -296,6 +319,7 @@ public class KwazamChessView {
             }
         }
     }
+    
     // Load the board from the model when loading a safefile or when undoing a move
     public void loadBoard(List<Piece> pieces, int turnNumber){
         HashMap<String, ImagePiece> newPieceMap = new HashMap<String, ImagePiece>();
