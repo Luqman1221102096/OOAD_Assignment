@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-import javax.swing.text.View;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -115,8 +114,6 @@ class KwazamChessModel {
         pieces.remove(piece);
         if (piece instanceof Sau) { //if Sau gets captured then game over
             gameOver = true;
-            //System.out.println("Game Over! " + piece.getSide() + " Sau has been captured.");
-            //System.exit(0); //end the game
         }
     }
 

@@ -1,12 +1,10 @@
 import java.util.List;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
-
+import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
 import java.util.HashMap;
-
 
 public class KwazamChessView {
     private JFrame frame;
@@ -127,7 +125,8 @@ public class KwazamChessView {
             // Blue Rams in the second-to-last row (player two)
             pieceMap.put((ROWS - 2) + "," + col, new ImagePiece(blueRam, true, "Ram"));
         }
-    
+
+        int whiteBlack = 0;
         for (int row = 0; row < ROWS; row++) {
             for (int col = 0; col < COLUMNS; col++) {
                 JButton cell = new JButton();
@@ -142,19 +141,47 @@ public class KwazamChessView {
                 /*if (controller != null) {
                     cell.addActionListener(controller.new CellClickListener(row, col));
                 }*/
-    
+                // Colors the board in checker patterns
+                if(whiteBlack % 2 == 0){
+                    cell.setBackground(Color.WHITE);
+                }else{
+                    cell.setBackground(Color.BLACK);
+                }
+                whiteBlack++;
+                cell.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
                 boardPanel.add(cell);
                 boardButtons[row][col] = cell;
             }
         }
     }
     
-
     private ImageIcon preScaledIcon(String path) {
         try {
             ImageIcon icon = new ImageIcon(path);
-            Image image = icon.getImage().getScaledInstance(55, 55, Image.SCALE_SMOOTH);
-            return new ImageIcon(image);
+            // Blue's turn
+            if(turnCount % 2 == 0){
+                Image image = icon.getImage().getScaledInstance(55, 55, Image.SCALE_SMOOTH);
+                return new ImageIcon(image);
+            }else{
+                //It's red's turn and flip the image icons
+                Image image = icon.getImage();
+                BufferedImage bufferedImage = new BufferedImage(55, 55, BufferedImage.TYPE_INT_ARGB);
+                Graphics2D g2d = bufferedImage.createGraphics();
+                // Apply scaling transformation to fit the image within the BufferedImage
+                g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+
+                // Apply flipping and scaling transformation
+                AffineTransform transform = new AffineTransform();
+                // Flip vertically: scale y by -1, translate height to maintain position
+                transform.scale(1, -1);
+                transform.translate(0, -55); // Negative of the width for horizontal flip
+                transform.scale(55.0 / image.getWidth(null), 55.0 / image.getHeight(null)); // Scale to fit
+
+                // Apply the transformation while drawing the scaled image
+                g2d.drawImage(image, transform, null);
+                g2d.dispose();
+                return new ImageIcon(bufferedImage);
+            }
         } catch (Exception e) {
             System.err.println("Error loading image: " + path);
             return null;
