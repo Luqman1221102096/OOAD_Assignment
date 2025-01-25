@@ -15,6 +15,7 @@ class KwazamChessController {
     private final int COLUMNS;
 
     //constructor for controller
+    // Author Luqman, Arif
     public KwazamChessController(KwazamChessModel model, KwazamChessView view) {
         this.model = model;
         this.view = view;
@@ -26,17 +27,19 @@ class KwazamChessController {
     }
 
     // Load game and update the GUI state
+    // Author: Luqman
     public void loadGame() {
         model.loadGameState(); // Load the saved game state into the model
         view.loadBoard(model.getPieces(), model.getTurn()); // Update the GUI to reflect the loaded state
         history.clearHistory();
     }
-
+    // Author: Arif
     public void saveGame() {
         model.safeGame(); //save game state
     }
 
     // undo game and update the GUI state
+    // Author Luqman
     public void undoGame() {
         // Game first move. Can't undo
         if(history.getHistorySize() == 0){
@@ -49,6 +52,7 @@ class KwazamChessController {
     }
 
     // Adds actionListeners to all cells
+    // Author Luqman
     public void cellListenerAdder(){
         for (int row = 0; row < ROWS; row++) {
             for (int col = 0; col < COLUMNS; col++) {
@@ -56,7 +60,7 @@ class KwazamChessController {
             }
         }
     }
-
+    //Author Luqman
     public void menuListenerAdder(List<JMenuItem> menuItems){
         menuItems.get(0).addActionListener(e -> System.exit(0));
         menuItems.get(1).addActionListener(e -> saveGame());
@@ -64,6 +68,7 @@ class KwazamChessController {
         menuItems.get(3).addActionListener(e -> undoGame());
     }
     // Implementation of action listener
+    // Authors Balfaqih, Luqman
     public class CellClickListener implements ActionListener {
         private int row;
         private int col;

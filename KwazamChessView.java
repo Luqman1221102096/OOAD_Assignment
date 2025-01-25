@@ -20,7 +20,7 @@ public class KwazamChessView {
     private HashMap<String, ImagePiece> pieceMap; 
     private JButton[][] boardButtons; 
     private List<JMenuItem> menuItems;
-
+    // Author Balfaqih
     public KwazamChessView(int rows, int columns) {
         this.ROWS = rows;
         this.COLUMNS = columns;
@@ -30,10 +30,7 @@ public class KwazamChessView {
         initializeGUI();
     }
 
-    /*public void setController(KwazamChessController controller) {
-        this.controller = controller;
-    }*/
-
+    // Author Balfaqih, Luqman, Arif
     public void initializeGUI() {
         frame = new JFrame("Kwazam Chess");
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -75,7 +72,7 @@ public class KwazamChessView {
 
         frame.setVisible(true);
     }
-
+    // Authors Balfaqih
     private void initializeBoard() {
         // Load icons for red (player one) pieces
         ImageIcon redRam = preScaledIcon("r-Ram.png");
@@ -136,11 +133,7 @@ public class KwazamChessView {
                 if (pieceMap.containsKey(key)) {
                     cell.setIcon(pieceMap.get(key).icon);
                 }
-    
-                // Attach the controller's listener
-                /*if (controller != null) {
-                    cell.addActionListener(controller.new CellClickListener(row, col));
-                }*/
+
                 // Colors the board in checker patterns
                 if(whiteBlack % 2 == 0){
                     cell.setBackground(Color.WHITE);
@@ -154,7 +147,7 @@ public class KwazamChessView {
             }
         }
     }
-    
+    // Author Balfaqih, Luqman
     private ImageIcon preScaledIcon(String path) {
         try {
             ImageIcon icon = new ImageIcon(path);
@@ -187,7 +180,7 @@ public class KwazamChessView {
             return null;
         }
     }
-
+    //Author Balfaqih
     public class ImagePiece {
         ImageIcon icon;
         boolean isBlue;
@@ -205,23 +198,23 @@ public class KwazamChessView {
             return this.type;
         }
     }
-
+    // Author Luqman
     public HashMap<String, ImagePiece> getPieceMap(){
         return pieceMap;
     }
-
+    // Author Luqman
     public JButton[][] getBoardButtons(){
         return boardButtons;
     }
-
+    // Author Luqman
     public List<JMenuItem> getMenuItems(){
         return menuItems;
     }
-
+    // Author Luqman
     public void updateStatusLabel(String label){
         statusLabel.setText(label);
     }
-
+    // Author Balfaqih, Hao
     public void updateBoard(String oldKey, String newKey) {
         ImagePiece movingPiece = pieceMap.get(oldKey);
 
@@ -248,7 +241,7 @@ public class KwazamChessView {
             }
         }
     }
-
+    // Author Bafalqih
     private void TorAndXor() {
         if (turnCount % 2 == 0) { // Only execute every two turns
             for (int row = 0; row < ROWS; row++) {
@@ -257,15 +250,15 @@ public class KwazamChessView {
                     if (piece != null) {
                         if (piece.type.equals("Tor")) {
                             if (!piece.isBlue) {
-                                pieceMap.put(row + "," + col, new ImagePiece(preScaledIcon("resources/r-Xor.png"), false, "Xor"));
+                                pieceMap.put(row + "," + col, new ImagePiece(preScaledIcon("r-Xor.png"), false, "Xor"));
                             } else {
-                                pieceMap.put(row + "," + col, new ImagePiece(preScaledIcon("resources/b-Xor.png"), true, "Xor"));
+                                pieceMap.put(row + "," + col, new ImagePiece(preScaledIcon("b-Xor.png"), true, "Xor"));
                             }
                         } else if (piece.type.equals("Xor")) {
                             if (!piece.isBlue) {
-                                pieceMap.put(row + "," + col, new ImagePiece(preScaledIcon("resources/r-Tor.png"), false, "Tor"));
+                                pieceMap.put(row + "," + col, new ImagePiece(preScaledIcon("r-Tor.png"), false, "Tor"));
                             } else {
-                                pieceMap.put(row + "," + col, new ImagePiece(preScaledIcon("resources/b-Tor.png"), true, "Tor"));
+                                pieceMap.put(row + "," + col, new ImagePiece(preScaledIcon("b-Tor.png"), true, "Tor"));
                             }
                         }
                     }
@@ -274,7 +267,7 @@ public class KwazamChessView {
             updateBoard(null, null); // Refresh the board to display changes
         }
     }
-
+    // Author Hao
     public void switchPlayerAndFlip() {
         turnCount++;
         TorAndXor();
@@ -305,7 +298,7 @@ public class KwazamChessView {
         // Switch player turn
         //statusLabel.setText(isPlayerOneTurn ? "Player 1's turn" : "Player 2's turn");
     }
-
+    // Author Hao
     private void updatePieceIcon(ImagePiece piece) {
         // Based on the flipped ownership, update the piece's icon
         if (!piece.isBlue) {
@@ -352,6 +345,7 @@ public class KwazamChessView {
     }
     
     // Load the board from the model when loading a safefile or when undoing a move
+    // Author Luqman
     public void loadBoard(List<Piece> pieces, int turnNumber){
         HashMap<String, ImagePiece> newPieceMap = new HashMap<String, ImagePiece>();
         for(Piece piece : pieces){
@@ -386,7 +380,7 @@ public class KwazamChessView {
         pieceMap = newPieceMap;
         updateBoard(null, null);
     }
-
+    // Author Luqman
     public void GameOver(String whoWon){
         JFrame gameOver = new JFrame();
         JOptionPane.showMessageDialog(gameOver, whoWon, "WINNER!", JOptionPane.INFORMATION_MESSAGE);

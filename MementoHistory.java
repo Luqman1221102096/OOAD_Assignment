@@ -1,4 +1,5 @@
 // The "Caretaker" class that stores the mementos
+// Author: Luqman
 import java.util.List;
 import java.util.ArrayList;
 public class MementoHistory {

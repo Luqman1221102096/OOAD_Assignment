@@ -54,10 +54,6 @@ public class TorXor extends Piece {
                 moves2.add(new int[]{this.x,i});
             }
             List<int[]> combinedMoves = Stream.concat(moves.stream(), moves2.stream()).toList();
-            /*System.out.println("");
-            for(int i=0;i<combinedMoves.size();i++){
-                System.out.println(combinedMoves.get(i)[0] + "," + combinedMoves.get(i)[1]);
-            }*/ 
             return combinedMoves;
         }
         else{
@@ -108,10 +104,6 @@ public class TorXor extends Piece {
                 }
             }
             List<int[]> combinedMoves = Stream.concat(moves.stream(), moves2.stream()).toList();
-            /*System.out.println("");
-            for(int i=0;i<combinedMoves.size();i++){
-                System.out.println(combinedMoves.get(i)[0] + "," + combinedMoves.get(i)[1]);
-            }*/ 
             return combinedMoves;
         }
     }

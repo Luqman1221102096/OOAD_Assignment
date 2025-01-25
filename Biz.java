@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 //Biz pieces move like knights in chess
+// Author Arif
 class Biz extends Piece {
     public Biz(String pieceID, String side, int x, int y) {
         super(pieceID, side, x, y);

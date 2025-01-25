@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
-
+// Author Arif
 //rams move forward and turns back when they reach the edge of the board
 class Ram extends Piece {
     private boolean movingForward = true; //track direction of movement

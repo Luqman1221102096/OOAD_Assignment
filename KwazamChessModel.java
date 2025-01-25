@@ -1,5 +1,4 @@
 //KwazamChessModel.java
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -17,7 +16,7 @@ class KwazamChessModel {
     private List<String> blueCaptured; //;ist of pieces captured by blue (//not working, prolly remove later...too eepy to fix)
     private List<String> redCaptured;  //list of pieces captured by red (//not working, prolly remove later...too eepy to fix)
     private boolean gameOver = false; // To let the controller and view know when a game is over.
-
+    // Author Arif
     public KwazamChessModel() {
         pieces = new ArrayList<>();
         this.blueTurn = true; //blue = true / red = false (change this for first turn)
@@ -28,6 +27,7 @@ class KwazamChessModel {
     }
 
     //set up all the pieces
+    // Author Arif, Luqman
     private void setupBoard() {
         //add Rams for both teams
         for (int i = 0; i < 5; i++) {
@@ -47,7 +47,7 @@ class KwazamChessModel {
         pieces.add(new TorXor("RX1", "Red", 4, 0, "Xor"));
         pieces.add(new TorXor("RT2", "Red", 0, 0, "Tor"));
     }
-
+    // Author Arif
     public boolean movePiece(String pieceID, int x, int y) {
         Piece piece = findPiece(pieceID);
         if (piece == null) {
@@ -70,7 +70,7 @@ class KwazamChessModel {
 
         return false;
     }
-
+    // Author Arif
     public void endTurn() {
         blueTurn = !blueTurn; //switch turn
         turnNumber++;//+turnnumber
@@ -80,26 +80,29 @@ class KwazamChessModel {
             }
         }
     }
-
+    // Author Arif
     public boolean isBlueTurn() {
         return blueTurn;
     }
 
     //get a list of all the pieces
+    // Author Arif
     public List<Piece> getPieces() {
         return pieces;
     }
 
     //get a list of all the pieces
+    // Author Arif
     public int getTurn() {
         return turnNumber;
     }
-
+    // Author Luqman
     public boolean getGameOver(){
         return gameOver;
     }
 
     //find piece by its ID
+    // Author Arif
     public Piece findPiece(String pieceID) {
         for (Piece piece : pieces) {
             if (piece.getPieceID().equals(pieceID)) {
@@ -110,14 +113,16 @@ class KwazamChessModel {
     }
 
     //remove a piece from the board when captured
+    // Author Arif
     public void removePiece(Piece piece) {
         pieces.remove(piece);
         if (piece instanceof Sau) { //if Sau gets captured then game over
             gameOver = true;
         }
     }
-
+    
     //check if there is a piece at the given coords
+    // Author Arif
     public Piece pieceAt(int x, int y) {
         for (Piece piece : pieces) {
             if (piece.getCoordinateX() == x && piece.getCoordinateY() == y) {
@@ -128,11 +133,13 @@ class KwazamChessModel {
     }
 
     //board boundaries
+    // Author Arif
     public boolean isWithinBounds(int x, int y) {
         return x >= 0 && x < 5 && y >= 0 && y < 8;
     }
 
     //execution
+    // Author Arif
     private void executeMove(String pieceID, int newX, int newY) {
         Piece piece = findPiece(pieceID);//find the piece by ID
         if (piece != null) {
@@ -151,6 +158,7 @@ class KwazamChessModel {
     }
 
     // Safe the game into a text file
+    // Author Luqman
     public void safeGame() {
         // Creates safe file if one doesn't already exit
         try {
@@ -179,6 +187,7 @@ class KwazamChessModel {
     }
 
     // Load game from safe file
+    // Author Luqman
     public void loadGameState() {
         pieces.clear();
         try {
@@ -226,6 +235,7 @@ class KwazamChessModel {
     }
 
     // Undo a move
+    // Author Luqman
     public void restoreState(Memento memento){
         this.pieces.clear(); // Removes current pieces
         this.pieces = memento.getPieces();
@@ -233,6 +243,7 @@ class KwazamChessModel {
         this.turnNumber = memento.getTurnNumber();
     }
     // Gets move from the controller 
+    // Author Luqman
     public boolean parseMove(int fromRow, int fromCol, int toRow, int toCol){
         Piece piece = pieceAt(fromCol, fromRow);
         //System.out.println(piece.getPieceID());
@@ -245,6 +256,7 @@ class KwazamChessModel {
         return false;
     }
     // Flip the model along with the board
+    // Author Luqman
     public void flipModel(){
         for(Piece piece : pieces){
             int x = piece.getCoordinateX();

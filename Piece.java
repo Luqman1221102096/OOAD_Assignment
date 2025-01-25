@@ -1,6 +1,7 @@
 import java.util.List;
 
 //base class for all pieces
+//Author: Luqman, Arif 
 abstract class Piece {
     String pieceID; //ID for the piece (like "BR0" for Blue Ram 0)
     String side;    //red or blue
