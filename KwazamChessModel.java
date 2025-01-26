@@ -1,4 +1,5 @@
 //KwazamChessModel.java
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -16,7 +17,7 @@ class KwazamChessModel {
     private List<String> blueCaptured; //;ist of pieces captured by blue (//not working, prolly remove later...too eepy to fix)
     private List<String> redCaptured;  //list of pieces captured by red (//not working, prolly remove later...too eepy to fix)
     private boolean gameOver = false; // To let the controller and view know when a game is over.
-    // Author Arif
+
     public KwazamChessModel() {
         pieces = new ArrayList<>();
         this.blueTurn = true; //blue = true / red = false (change this for first turn)
@@ -27,7 +28,6 @@ class KwazamChessModel {
     }
 
     //set up all the pieces
-    // Author Arif, Luqman
     private void setupBoard() {
         //add Rams for both teams
         for (int i = 0; i < 5; i++) {
@@ -47,7 +47,7 @@ class KwazamChessModel {
         pieces.add(new TorXor("RX1", "Red", 4, 0, "Xor"));
         pieces.add(new TorXor("RT2", "Red", 0, 0, "Tor"));
     }
-    // Author Arif
+
     public boolean movePiece(String pieceID, int x, int y) {
         Piece piece = findPiece(pieceID);
         if (piece == null) {
@@ -70,7 +70,7 @@ class KwazamChessModel {
 
         return false;
     }
-    // Author Arif
+
     public void endTurn() {
         blueTurn = !blueTurn; //switch turn
         turnNumber++;//+turnnumber
@@ -80,29 +80,26 @@ class KwazamChessModel {
             }
         }
     }
-    // Author Arif
+
     public boolean isBlueTurn() {
         return blueTurn;
     }
 
     //get a list of all the pieces
-    // Author Arif
     public List<Piece> getPieces() {
         return pieces;
     }
 
     //get a list of all the pieces
-    // Author Arif
     public int getTurn() {
         return turnNumber;
     }
-    // Author Luqman
+
     public boolean getGameOver(){
         return gameOver;
     }
 
     //find piece by its ID
-    // Author Arif
     public Piece findPiece(String pieceID) {
         for (Piece piece : pieces) {
             if (piece.getPieceID().equals(pieceID)) {
@@ -113,16 +110,14 @@ class KwazamChessModel {
     }
 
     //remove a piece from the board when captured
-    // Author Arif
     public void removePiece(Piece piece) {
         pieces.remove(piece);
         if (piece instanceof Sau) { //if Sau gets captured then game over
             gameOver = true;
         }
     }
-    
+
     //check if there is a piece at the given coords
-    // Author Arif
     public Piece pieceAt(int x, int y) {
         for (Piece piece : pieces) {
             if (piece.getCoordinateX() == x && piece.getCoordinateY() == y) {
@@ -133,13 +128,11 @@ class KwazamChessModel {
     }
 
     //board boundaries
-    // Author Arif
     public boolean isWithinBounds(int x, int y) {
         return x >= 0 && x < 5 && y >= 0 && y < 8;
     }
 
     //execution
-    // Author Arif
     private void executeMove(String pieceID, int newX, int newY) {
         Piece piece = findPiece(pieceID);//find the piece by ID
         if (piece != null) {
@@ -158,7 +151,6 @@ class KwazamChessModel {
     }
 
     // Safe the game into a text file
-    // Author Luqman
     public void safeGame() {
         // Creates safe file if one doesn't already exit
         try {
@@ -186,26 +178,29 @@ class KwazamChessModel {
         }
     }
 
-    // Load game from safe file
-    // Author Luqman
+    // Load game from safe file //hao zhe applied hotfix to empty save file
     public void loadGameState() {
+        File file = new File("safeFile.txt");
+        if (!file.exists()) {
+            System.out.println("Save file not found. Loading initial board state.");// if no save file is present, initial board state will be loaded
+            pieces.clear();
+            setupBoard();
+            turnNumber = 0;
+            blueTurn = true;
+            return;
+        }
+    
         pieces.clear();
-        try {
-            File file = new File("safeFile.txt");
-            Scanner scanner = new Scanner(file);
+        try (Scanner scanner = new Scanner(file)) {
             String line;
             line = scanner.nextLine();
             turnNumber = Integer.parseInt(line.substring(0, 1));
             line = scanner.nextLine();
-            if(line.substring(0, 1).equals("t")){
-                blueTurn = true;
-            }
-            else{
-                blueTurn = false;
-            }
+            blueTurn = line.equalsIgnoreCase("true");
+    
             while (scanner.hasNextLine()) {
                 line = scanner.nextLine();
-                String PieceID = line.substring(0, 3);
+                String pieceID = line.substring(0, 3);
                 String side;
                 int x = Integer.parseInt(line.substring(4, 5));
                 int y = Integer.parseInt(line.substring(6, 7));
@@ -215,27 +210,26 @@ class KwazamChessModel {
                     side = "Red";
                 }
                 if (line.charAt(1) == 'R') {
-                    pieces.add(new Ram(PieceID, side, x, y));
+                    pieces.add(new Ram(pieceID, side, x, y));
                 } else if (line.charAt(1) == 'B') {
-                    pieces.add(new Biz(PieceID, side, x, y));
+                    pieces.add(new Biz(pieceID, side, x, y));
                 } else if (line.charAt(1) == 'S') {
-                    pieces.add(new Sau(PieceID, side, x, y));
+                    pieces.add(new Sau(pieceID, side, x, y));
                 } else if (line.charAt(1) == 'T') {
-                    pieces.add(new TorXor(PieceID, side, x, y, "Tor"));
+                    pieces.add(new TorXor(pieceID, side, x, y, "Tor"));
                 } else if (line.charAt(1) == 'X') {
-                    pieces.add(new TorXor(PieceID, side, x, y, "Xor"));
+                    pieces.add(new TorXor(pieceID, side, x, y, "Xor"));
                 }
-                System.out.println(line);
             }
-            scanner.close();
+            System.out.println("Game state loaded from file.");
         } catch (FileNotFoundException e) {
-            System.out.println("An error occurred.");
+            System.out.println("An error occurred while loading the save file.");
             e.printStackTrace();
         }
     }
 
+
     // Undo a move
-    // Author Luqman
     public void restoreState(Memento memento){
         this.pieces.clear(); // Removes current pieces
         this.pieces = memento.getPieces();
@@ -243,7 +237,6 @@ class KwazamChessModel {
         this.turnNumber = memento.getTurnNumber();
     }
     // Gets move from the controller 
-    // Author Luqman
     public boolean parseMove(int fromRow, int fromCol, int toRow, int toCol){
         Piece piece = pieceAt(fromCol, fromRow);
         //System.out.println(piece.getPieceID());
@@ -256,7 +249,6 @@ class KwazamChessModel {
         return false;
     }
     // Flip the model along with the board
-    // Author Luqman
     public void flipModel(){
         for(Piece piece : pieces){
             int x = piece.getCoordinateX();
