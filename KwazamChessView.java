@@ -347,6 +347,7 @@ public class KwazamChessView {
     // Load the board from the model when loading a safefile or when undoing a move
     // Author Luqman
     public void loadBoard(List<Piece> pieces, int turnNumber){
+        turnCount = turnNumber; 
         HashMap<String, ImagePiece> newPieceMap = new HashMap<String, ImagePiece>();
         for(Piece piece : pieces){
             if(piece instanceof Ram){
@@ -376,7 +377,6 @@ public class KwazamChessView {
                 newPieceMap.put(piece.getCoordinateY() + "," + piece.getCoordinateX(), newImagePiece);
             }
         }
-        turnCount = turnNumber; 
         pieceMap = newPieceMap;
         updateBoard(null, null);
     }
